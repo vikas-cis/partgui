@@ -454,7 +454,12 @@ export class AddItemComponent implements OnInit, OnDestroy {
       (resp) => {
         return resp.fits;
       }
-    );
+    )
+    .catch((error) => {
+      return {
+        fits: true
+      }
+    })
   }
 
 

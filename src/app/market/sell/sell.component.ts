@@ -125,6 +125,7 @@ export class SellComponent implements OnInit {
 
     this.templateSearchSubcription = this.template.search(pageNumber, max, this.filters.sort, 1, this.filters.category, search, hashItems)
       .take(1).subscribe((listings: Array<Listing>) => {
+        console.log(listings);
         listings = listings.map((t) => {
         if (this.listingService.cache.isAwaiting(t)) {
           t.status = 'awaiting';

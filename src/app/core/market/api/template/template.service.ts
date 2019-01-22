@@ -55,13 +55,24 @@ export class TemplateService {
 
   search(page: number, pageLimit: number, sort: string, profileId: number, category: string,
     searchString: string, hashItems: any): Observable<Array<Template>> {
-    const params = ['search', page, pageLimit, 'DESC', sort,  profileId, searchString, category, hashItems];
-    return this.market.call('template', params)
+    const newParams = ['search', page, pageLimit, 'DESC', sort,  profileId, searchString, category, hashItems];
+    const oldParams = ['search', page, pageLimit, 'ASC', profileId, category, searchString];
+
+    // Hacking the search command until we have latest marketplace updated
+    return this.market.call('template', oldParams)
+    .catch((error: any) => {
+      return this.market.call('template', newParams)
+      .map(
+      (templates: any) => {
+        return templates.map(t => new Template(t));
+      }
+    )
+    })
     .map(
       (templates: any) => {
         return templates.map(t => new Template(t));
       }
-    );
+    )
   }
 
   post(template: Template, marketId: number, expTime: number) {
@@ -69,6 +80,7 @@ export class TemplateService {
     .do(t => this.listingCache.posting(template));
   }
 
+  // Again hacking until we have newer marketpalce version online
   size(listingTemplateId: number) {
     return this.market.call('template', ['size', listingTemplateId]);
   }
